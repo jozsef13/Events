@@ -1,0 +1,242 @@
+﻿<!-- start header -->
+@model Events.Models.Entities.EventsViewModel;
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%" src="~/img/logo.jpg" alt="logo" /></a>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                            if (User.IsInRole("User"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Carts">
+                                        <i class="fa" style="font-size:24px">&#xf07a;</i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<div class="container">
+    <main role="main" class="pb-3">
+        <div id="wrapper">
+            <section id="featured">
+                <!-- Slider -->
+                <div id="main-slider" class="flexslider">
+                    <ul class="slides">
+                        @foreach (var element in Model.EventsList)
+                        {
+                            <li>
+                                <a asp-action="Details" asp-controller="Events" asp-route-id="@element.Id"><img src="@Url.Content(element.CoverPhotoPath)" alt="" /></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <!-- end slider -->
+            </section>
+            <section class="callaction">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div>
+                                <h1><span>Hello,<span class="blue_text">Welcome!!</span></span></h1><span class="clear spacer_responsive_hide_mobile " style="height:13px;display:block;"></span>
+                                <h1>We provide you tickets and reservations to the best events! Check out the categories below:</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Accordion starts -->
+                            <div class="panel-group" id="accordion-alt3">
+                                <!-- Panel. Use "panel-XXX" class for different colors. Replace "XXX" with color. -->
+                                <div class="panel">
+                                    <!-- Panel heading -->
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseOne-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[0].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[0].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseTwo-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[1].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[1].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseThree-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[2].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThree-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[2].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseFour-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[3].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseFour-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[3].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseFive-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[4].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseFive-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[4].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Accordion ends -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="testimonial-area">
+                <div class="testimonial-solid">
+                    <div class="container">
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                            <ol class="carousel-indicators">
+                                <li data-target="#carousel-example-generic" data-slide-to="0" class="">
+                                    <a href="#"></a>
+                                </li>
+                                <li data-target="#carousel-example-generic" data-slide-to="1" class="">
+                                    <a href="#"></a>
+                                </li>
+                                <li data-target="#carousel-example-generic" data-slide-to="2" class="active">
+                                    <a href="#"></a>
+                                </li>
+                                <li data-target="#carousel-example-generic" data-slide-to="3" class="">
+                                    <a href="#"></a>
+                                </li>
+                            </ol>
+                            <div class="carousel-inner">
+                                <div class="item">
+                                    <p>Music and rhythm find their way into the secret places of the soul!</p>
+                                    <p>
+                                        <b>- Plato -</b>
+                                    </p>
+                                </div>
+                                <div class="item">
+                                    <p>The most honest form of filmmaking is to make a film for yourself.</p>
+                                    <p>
+                                        <b>- Peter Jackson -</b>
+                                    </p>
+                                </div>
+                                <div class="item active">
+                                    <p>If football has taught me something is that you can overcome anything if, and only if, you love that something enogh.</p>
+                                    <p>
+                                        <b>- Lionel Messi -</b>
+                                    </p>
+                                </div>
+                                <div class="item">
+                                    <p>The greatness of a culture can be found in its festivals.</p>
+                                    <p>
+                                        <b>- Siddharth Katragadda -</b>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,120 @@
+﻿<!-- start header -->
+@model List<Artist>
+@using Microsoft.AspNetCore.Identity
+@using Events.Areas.Identity.Data
+@inject SignInManager<EventsUser> SignInManager
+@inject UserManager<EventsUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand">
+                    <a asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%;" src="~/img/logo.jpg" alt="logo" /></a>
+                </div>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li class="active"><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                            if (User.IsInRole("User"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Carts">
+                                        <i class="fa" style="font-size:24px">&#xf07a;</i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<section id="inner-headline">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-6">
+                <h2 class="pageTitle">Artists</h2><br />
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="Artists" asp-action="Create"><button style="width: 250px;">Add Artist</button></a>
+                    <a asp-controller="Artists" asp-action="EditList"><button style="width: 250px;">Edit List</button></a>
+                }
+            </div>
+            <div class="col-lg-6">
+                <form asp-action="Search" asp-controller="Artists">
+                    <input style="float:left;" type="text" name="name" placeholder="Search artist..." required>
+                    <input style="float:left;" type="submit" value="Search" />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <main role="main" class="pb-3">
+        <div id="wrapper">
+            <section id="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="clearfix">
+                            </div>
+                            <div class="row">
+                                <section id="projects">
+
+                                    <ul id="thumbs" class="portfolio">
+                                        @foreach (var element in Model)
+                                        {
+                                            <li class="item-thumbs col-lg-3 design" data-id="id-0">
+                                                <!-- Fancybox - Gallery Enabled - Title - Full Image -->
+                                                <a class="hover-wrap fancybox" asp-action="SearchEventByArtist" asp-controller="Events" asp-route-Id="@element.Id">
+                                                    <span class="overlay-img"></span>
+                                                    <span class="overlay-img-thumb"><i class="icon-info-blocks fa fa"></i></span>
+                                                </a>
+                                                <!-- Thumb Image and Description -->
+                                                <img src="@Url.Content(element.PhotoPath)" style="width: 300px; height: 200px">
+                                                <button style="margin-top:0px">@element.Name</button>
+                                            </li>
+                                        }
+                                        <!-- End Item Project -->
+                                    </ul>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

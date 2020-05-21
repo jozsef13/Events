@@ -1,0 +1,3 @@
+Login, register and all the functionalities implemented with identity are located in the Identity area, Pages folder in the following cshtml and cshtml.cs files: Login, Register, Index, AccessDenied, Logout. 
+
+The custom model for extra details about a user is implemented in the Identity area, Data folder: EventsUser.cs which extends IdentityUser.

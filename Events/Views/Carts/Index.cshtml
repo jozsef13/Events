@@ -1,0 +1,133 @@
+﻿@model Events.Models.Cart
+<!-- start header -->
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand">
+                    <a asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%;" src="~/img/logo.jpg" alt="logo" /></a>
+                </div>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                            if (User.IsInRole("User"))
+                            {
+                                <li class="active">
+                                    <a asp-action="Index" asp-controller="Carts">
+                                        <i class="fa" style="font-size:24px">&#xf07a;</i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<section id="inner-headline">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="pageTitle">Cart</h2><br />
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <main role="main">
+        <div id="wrapper">
+            <section id="content">
+                <div class="container">
+                    <div class="about" >
+                        <div class="row">
+                            <center>
+                                <div class="col-md-2">
+                                    <h3><span>Quantity</span></h3>
+                                </div>
+                                <div class="col-md-2">
+                                    <h3><span>Date and Time</span></h3>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3><span>Name, Artist and Place</span></h3>
+                                </div>
+                                <div class="col-md-3">
+                                    <h2><span>Ticket Price</span></h2>
+                                </div>
+                                <div class="col-md-2">
+                                    <h2><span>Total Price</span></h2>
+                                </div>
+                            </center>
+                        </div>
+                        <div class="row" style="border-top: 1px solid grey;">
+                            <center>
+                                <div class="col-md-2">
+                                    <h3><span><a asp-action="AddOne" asp-controller="Carts" class="fa fa-plus-square" style="font-size:24px;"></a></span> <span style="color: orangered;">@Model.TicketsQuantity X</span></h3>
+                                </div>
+                                <div class="col-md-2">
+                                    <h3><span>@Model.CartTicket.TicketEvent.DateTime.Value.ToString("dd") <span style="color: orangered;">@Model.CartTicket.TicketEvent.DateTime.Value.ToString("MMMM")</span> @Model.CartTicket.TicketEvent.DateTime.Value.ToString("yyyy")</span></h3>
+                                    <h5><span><span style="color: orangered;">@Model.CartTicket.TicketEvent.DateTime.Value.ToString("ddd")</span> @Model.CartTicket.TicketEvent.DateTime.Value.ToString("hh:mm tt")</span></h5>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3><span style="color: orangered;">@Model.CartTicket.TicketEvent.Artist.Name - @Html.DisplayFor(m => Model.CartTicket.TicketEvent.Name)</span></h3>
+                                    <h5><span>@Html.DisplayFor(m => Model.CartTicket.TicketEvent.Description), @Html.DisplayFor(m => Model.CartTicket.TicketEvent.Location.City) <img src="~/img/ro.png" /></span></h5>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3><span style="color: orangered;">@Model.CartTicket.Price$</span></h3>
+                                </div>
+                                <div class="col-md-2">
+                                    <h3><span style="color: orangered;">@Model.TotalPrice$</span></h3>
+                                </div>
+                            </center>
+                        </div>
+                        
+                        <div class="row" style="border-top: 1px solid grey;">
+                            <br />
+                            <div class="col-md-4" style="text-align:right">
+                                <a asp-action="Index" asp-controller="Events" class="btn btn-primary" style="display: block;margin-left: auto;margin-right: auto;width: 100%;">Back to Events</a>
+                            </div>
+                            <form asp-action="DeleteOne" asp-controller="Carts">
+                                <div class="col-md-4">
+                                    Quantity to Delete: <input name="TicketsQuantity" type="number" min="1" max="@Model.TicketsQuantity" value="1" />
+                                    <input type="submit" class="btn btn-danger" value="Delete" style="width: 40%;">
+                                </div>
+                            </form>
+                            
+                            <div class="col-md-4" style="text-align:right">
+                                <a asp-action="Checkout" asp-controller="Carts" class="btn btn-primary" style="display: block;margin-left: auto;margin-right: auto;width: 100%;">Proceed to Checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

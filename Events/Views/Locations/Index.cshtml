@@ -1,0 +1,229 @@
+﻿@model List<Location>
+@using Microsoft.AspNetCore.Identity
+@using Events.Areas.Identity.Data
+@inject SignInManager<EventsUser> SignInManager
+@inject UserManager<EventsUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+<!-- start header -->
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%" src="~/img/logo.jpg" alt="logo" /></a>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li class="active"><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                            if (User.IsInRole("User"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Carts">
+                                        <i class="fa" style="font-size:24px">&#xf07a;</i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<section id="inner-headline">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="pageTitle">Locations</h2><br />
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="Locations" asp-action="Create"><button style="width: 250px;">Add Location</button></a>
+                    <a asp-controller="Locations" asp-action="AllLocations"><button style="width: 250px;">Edit List</button></a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<section id="content">
+    <div class="container content">
+        <!-- Service Blcoks -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <h2>Most Popular Cities of The Month</h2>
+                </div>
+                <div class="col-md-6" style="text-align:right; background:none;">
+                    <div class="panel-group" id="accordion-alt3">
+                        <div class="panel">
+                            <!-- Panel heading -->
+                            <div class="panel-heading">
+                                <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseOne-alt3">
+                                    <h2>Other cities</h2>
+                                </a>
+                            </div>
+                            <div id="collapseOne-alt3" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <ul>
+                                        @foreach (var loc in Model)
+                                        {
+                                            <li><a asp-controller="Events" asp-action="SearchEventByLocation" asp-route-Name="@loc.City">@Html.DisplayFor(s => loc.City)</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row service-v1 margin-bottom-40">
+            <div class="col-md-4 md-margin-bottom-40">
+                <a asp-controller="Events" asp-action="SearchEventByLocation" asp-route-Name="Bucharest"><img class="img-responsive" src="~/img/buc.jpg" alt=""></a>
+                <h2>Bucharest</h2>
+                <p>See what events are in Bucharest!</p>
+            </div>
+            <div class="col-md-4">
+                <a asp-controller="Events" asp-action="SearchEventByLocation" asp-route-Name="Targu-Mures"><img class="img-responsive" src="~/img/tgm.jpg" alt=""></a>
+                <h2>Targu-Mures</h2>
+                <p>See what events are in Targu-Mures!</p>
+            </div>
+            <div class="col-md-4 md-margin-bottom-40">
+                <a asp-controller="Events" asp-action="SearchEventByLocation" asp-route-Name="Craiova"><img class="img-responsive" src="~/img/cra.jpg" alt=""></a>
+                <h2>Craiova</h2>
+                <p>See what events are in Craiova!</p>
+            </div>
+        </div>
+        <!-- End Service Blcoks -->
+        <hr class="margin-bottom-50">
+        <!-- Info Blcoks -->
+        <div class="row">
+            <div class="col-sm-4 info-blocks">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="about-logo">
+                            <h2><span style="color:cadetblue">Most Popular Places from Bucharest</span></h2>
+                        </div>
+                    </div>
+                </div>
+                <i class="icon-info-blocks fa fa-lightbulb-o"></i>
+                <div class="info-blocks-in">
+                    <h3>Palace Hall</h3>
+                    <p>
+                        Sala Palatului (Palace Hall) in Bucharest, Romania is a conference centre and concert hall immediately behind the National Museum of
+                        Art of Romania, the former royal palace in the heart of the city. It was built between 1959 and 1960, during the communist era.
+                        It has been the site of conferences such as the United Nations Economic Commission for Europe, the World Congress on Population,
+                        the World Congress on Energy, and the World Congress of the Red Cross. The main hall can accommodate 4,060 spectators.
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-4 info-blocks">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="about-logo">
+                            <h2><span style="color:cadetblue">Most Popular Places from Targu-Mures</span></h2>
+                        </div>
+                    </div>
+                </div>
+                <i class="icon-info-blocks fa fa-lightbulb-o"></i>
+                <div class="info-blocks-in">
+                    <h3>Teleki Domain(Castle)</h3>
+                    <p>
+                        Teleki Castle in Gornești (Hungarian Teleki-kastély) is an architectural ensemble built by the Teleki family in the town of Gornești,
+                        Mureș County. Named "the most beautiful castle in Transylvania" and "Mureș treasure", the complex is 17 km away from Târgu Mureș, on the
+                        left side of the Mureș river, being built in the Grassalkovich style, very widespread in the Kingdom of Hungary. It was designed by the
+                        architect Andreas Mayerhoffer in Salzburg, being similar to the palaces in Gödöllő and Pecel, made by him. Teleki Castle is located
+                        within an impressive dendrological park with allegorical statues.
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-4 info-blocks">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="about-logo">
+                            <h2><span style="color:cadetblue">Most Popular Places from Craiova</span></h2>
+                        </div>
+                    </div>
+                </div>
+                <i class="icon-info-blocks fa fa-lightbulb-o"></i>
+                <div class="info-blocks-in">
+                    <h3>"Marin Sorescu" National Theatre</h3>
+                    <p>
+                        "Marin Sorescu" National Theater, Craiova, formerly known as Craiova National Theater, is a public cultural theater institution funded by
+                        the Ministry of Culture and National Identity. Founded in 1850, the theater was named after the culture man and universal writer Marin
+                        Sorescu, in the years after the 1989 Revolution. The current building of the Craiova theater, a true architectural symbol of the city,
+                        created by the architect Alexandru Iotzu, was inaugurated on April 21, 1973.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- End Info Blcoks -->
+        <!-- Info Blcoks -->
+        <div class="row">
+            <div class="col-sm-4 info-blocks">
+                <i class="icon-info-blocks fa fa-lightbulb-o"></i>
+                <div class="info-blocks-in">
+                    <h3>Romanian Athenaeum</h3>
+                    <p>
+                        The Romanian Athenaeum (Romanian: Ateneul Român) is a concert hall in the center of Bucharest, Romania and a landmark of the Romanian
+                        capital city. Opened in 1888, the ornate, domed, circular building is the city's main concert hall and home of the "George Enescu"
+                        Philharmonic and of the George Enescu annual international music festival.
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-4 info-blocks">
+                <i class="icon-info-blocks fa fa-lightbulb-o"></i>
+                <div class="info-blocks-in">
+                    <h3>Palace Of Culture</h3>
+                    <p>
+                        The Palace of Culture (Romanian: Palatul Culturii, Hungarian: Kultúrpalota) is an edifice located in the centre of Târgu Mureș
+                        (Marosvásárhely), Romania. The building houses the Mureș County Library, the Mureș County Museum, and the State Philharmonic of
+                        Târgu Mureș. The Palace of Culture of Târgu Mureș is listed in the National Register of Historic Monuments.
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-4 info-blocks">
+                <i class="icon-info-blocks fa fa-lightbulb-o"></i>
+                <div class="info-blocks-in">
+                    <h3>Craiova Art Museum</h3>
+                    <p>
+                        The Craiova Art Museum (Romanian: Muzeul de Artă din Craiova) is an art museum in the city of Craiova, Oltenia, Romania. The museum
+                        is housed in the Constantin Mihail Palace, built from 1898 to 1907 according to the plans of French architect Paul Gottereau. The
+                        palace once belonged to Michael Constantine (1837–1908), a member of one of the richest families in Romania and is known as Jean
+                        Mihail Palace. The palace is decorated with Carrara marble stairs, Lyon silk walls, Murano glass chandeliers, painted ceilings,
+                        partly gilded stucco, and Venetian mirrors. It has hosted kings of Romania, in 1939 the exiled Polish president Ignacy Mościcki
+                        (1867–1946), and the former Yugoslav leader Josip Broz Tito (1892–1980).
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- End Info Blcoks -->
+    </div>
+</section>

@@ -1,0 +1,184 @@
+﻿<!-- start header -->
+@model Events.Models.Entities.DetailsViewModel
+@using Microsoft.AspNetCore.Identity
+@using Events.Areas.Identity.Data
+@inject SignInManager<EventsUser> SignInManager
+@inject UserManager<EventsUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand">
+                    <a asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%;" src="~/img/logo.jpg" alt="logo" /></a>
+                </div>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="active"><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                            if (User.IsInRole("User"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Carts">
+                                        <i class="fa" style="font-size:24px">&#xf07a;</i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<section id="inner-headline">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="pageTitle"><span style="color: orangered;">@Html.DisplayFor(model => model.DetailedEvent.Artist.Name) - @Model.DetailedEvent.Name</span></h2>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="Events" asp-action="Edit" asp-route-id="@Model.DetailedEvent.Id"><button style="width: 200px;">Edit</button></a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <main role="main">
+        <div id="wrapper">
+            <section id="content">
+                <div class="container">
+                    <div class="about">
+                        <div class="col-lg-8">
+                            <img src="@Url.Content(Model.DetailedEvent.CoverPhotoPath)" style="width: 700px; height: 400px;" />
+                        </div>
+                        <div class="col-lg-4">
+                            <dl>
+                                <dd class="col-sm-10">
+                                    <p><b>About the artist:</b> @Html.DisplayFor(model => model.DetailedEvent.Artist.Description)</p>
+                                </dd>
+                                <dd class="col-sm-10">
+                                    <p><b>Place:</b> @Model.DetailedEvent.Description</p>
+                                </dd>
+                                <dd class="col-sm-10">
+                                    <p><b>Location:</b> @Html.DisplayFor(model => model.DetailedEvent.Location.City), @Html.DisplayFor(model => model.DetailedEvent.Location.Country)</p>
+                                </dd>
+                                <dd class="col-sm-10">
+                                    <p><b>About Location:</b> @Html.DisplayFor(model => model.DetailedEvent.Location.Description)</p>
+                                </dd>
+                                <dd class="col-sm-10">
+                                    <p><b>Event Type:</b> @Model.DetailedEvent.Type.Name, @Html.DisplayFor(model => model.DetailedEvent.SubType.Name)</p>
+                                </dd>
+                                <dd class="col-sm-10">
+                                    <p><b>Date and Time:</b> @Model.DetailedEvent.DateTime.Value.ToString("dd/MM/yyyy"), @Model.DetailedEvent.DateTime.Value.ToString("hh:mm tt")</p>
+                                </dd>
+                                <dd class="col-sm-10">
+                                    <p><b>Available Tickets:</b> @Html.DisplayFor(model => model.DetailedEvent.AvailableTickets) </p>
+                                </dd>
+                                <dd class="col-sm-10">
+                                    <p><b>Ticket Price:</b> @Html.DisplayFor(model => model.DetailedEvent.Ticket.Price) </p>
+                                </dd>
+                            </dl>
+                            @if (User.IsInRole("User"))
+                            {
+                                <div class="col-md-12">
+                                    <form asp-action="AddToCart" asp-controller="Carts" asp-route-id="@Model.DetailedEvent.Id">
+                                        @{
+                                            if (Model.DetailedEvent.AvailableTickets == 0)
+                                            {
+                                                <input type="number" value="1" min="1" max="@Model.DetailedEvent.AvailableTickets" name="TicketsQuantity" readonly />
+                                                <input type="submit" value="Add to Cart" disabled />
+                                            }
+                                            else
+                                            {
+                                                <input type="number" value="1" min="1" max="@Model.DetailedEvent.AvailableTickets" name="TicketsQuantity" />
+                                                <input type="submit" value="Add to Cart" />
+                                            }
+                                        }
+                                    </form>
+                                    <br />
+                                    <b>OR</b>
+                                    <br /><br />
+                                    <form asp-action="Reserve" asp-controller="Reservations" asp-route-id="@Model.DetailedEvent.Id">
+                                        @{
+                                            if (Model.DetailedEvent.AvailableTickets == 0)
+                                            {
+                                                <input type="number" value="1" min="1" max="@Model.DetailedEvent.AvailableTickets" name="TicketsQuantity" readonly />
+                                                <input type="submit" value="Reserve" disabled />
+                                            }
+                                            else
+                                            {
+                                                <input type="number" value="1" min="1" max="@Model.DetailedEvent.AvailableTickets" name="TicketsQuantity" />
+                                                <input type="submit" value="Reserve" />
+                                            }
+                                        }
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="about" style="border-top:1px solid #808080;">
+                    <h2>Other Events from @Model.DetailedEvent.Location.City, @Model.DetailedEvent.Location.Country</h2>
+                    <div class="col-lg-12">
+                        @foreach (var element in Model.SimilarEvents)
+                        {
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <!-- Heading and para -->
+                                    <div class="block-heading-two">
+                                        <h3><span>@element.DateTime.Value.ToString("dd") <span style="color: orangered;">@element.DateTime.Value.ToString("MMMM")</span> @element.DateTime.Value.ToString("yyyy")</span></h3>
+                                        <h5><span><span style="color: orangered;">@element.DateTime.Value.ToString("ddd")</span> @element.DateTime.Value.ToString("hh:mm tt")</span></h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="block-heading-two">
+                                        <h3><span style="color: orangered;">@element.Artist.Name - @Html.DisplayFor(m => element.Name)</span></h3>
+                                        <h5><span>@Html.DisplayFor(m => element.Description), @Html.DisplayFor(m => element.Location.City) <img src="~/img/ro.png" /></span></h5>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="block-heading-two">
+                                        <h3><span><a asp-controller="Events" asp-action="Details" asp-route-id="@element.Id"><button>Tickets/Reservations</button></a></span></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

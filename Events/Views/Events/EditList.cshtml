@@ -1,0 +1,149 @@
+﻿@model IEnumerable<Events.Models.Event>
+
+@{
+    ViewData["Title"] = "EditList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- start header -->
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%" src="~/img/logo.jpg" alt="logo" /></a>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="active"><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<section id="inner-headline">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="pageTitle">Events Edit</h2><br />
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="Events" asp-action="Create"><button style="width: 250px;">Add Event</button></a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <main role="main">
+        <div id="wrapper">
+            <section id="content">
+                <div class="container">
+                    <div class="about">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        Place
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DateTime)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.MaximumTickets)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.AvailableTickets)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Location)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Artist)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Type)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.SubType)
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Description)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DateTime)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MaximumTickets)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AvailableTickets)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Location.City, item.Location.Country)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Artist.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Type.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.SubType.Name)
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

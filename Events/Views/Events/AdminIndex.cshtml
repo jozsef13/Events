@@ -1,0 +1,222 @@
+﻿@model Events.Models.Entities.EventsViewModel;
+@using Microsoft.AspNetCore.Identity
+@using Events.Areas.Identity.Data
+@inject SignInManager<EventsUser> SignInManager
+@inject UserManager<EventsUser> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+<!-- start header -->
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand">
+                    <a asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%;" src="~/img/logo.jpg" alt="logo" /></a>
+                </div>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="active"><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                            if (User.IsInRole("User"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Carts">
+                                        <i class="fa" style="font-size:24px">&#xf07a;</i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<section id="inner-headline">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="pageTitle">Latest Events</h2><br />
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="Events" asp-action="Create"><button style="width: 250px;">Add Event</button></a>
+                    <a asp-controller="Events" asp-action="EditList"><button style="width: 250px;">Edit List</button></a>
+                }
+            </div>
+            <div class="col-lg-6">
+                <form asp-action="Search">
+                    <input style="float:left;" type="text" name="name" placeholder="Search event..." required>
+                    <input style="float:left;" type="submit" value="Search" />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <main role="main">
+        <div id="wrapper">
+            <section id="content">
+                <div class="container">
+                    <div class="about">
+                        <div class="col-sm-2">
+                            <div class="panel-group" id="accordion-alt3">
+                                <!-- Panel. Use "panel-XXX" class for different colors. Replace "XXX" with color. -->
+                                <div class="panel">
+                                    <!-- Panel heading -->
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseOne-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[0].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[0].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseTwo-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[1].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[1].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseThree-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[2].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThree-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[2].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseFour-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[3].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseFour-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[3].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion-alt3" href="#collapseFive-alt3">
+                                                <i class="fa fa-angle-right"></i> @Html.DisplayFor(m => Model.EventTypes[4].Name)
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseFive-alt3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ul>
+                                                @foreach (var sub in Model.EventTypes[4].SubTypes)
+                                                {
+                                                    <li><a asp-controller="Events" asp-action="SearchByType" asp-route-Id="@sub.Id">@Html.DisplayFor(s => sub.Name)</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-lg-10" style="border-left: 1px solid #808080">
+                            @foreach (var element in Model.EventsList)
+                            {
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <!-- Heading and para -->
+                                        <div class="block-heading-two">
+                                            <h3><span>@element.DateTime.Value.ToString("dd") <span style="color: orangered;">@element.DateTime.Value.ToString("MMMM")</span> @element.DateTime.Value.ToString("yyyy")</span></h3>
+                                            <h5><span><span style="color: orangered;">@element.DateTime.Value.ToString("ddd")</span> @element.DateTime.Value.ToString("hh:mm tt")</span></h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="block-heading-two">
+                                            <h3><span style="color: orangered;">@element.Artist.Name - @Html.DisplayFor(m => element.Name)</span></h3>
+                                            <h5><span>@Html.DisplayFor(m => element.Description), @Html.DisplayFor(m => element.Location.City) <img src="~/img/ro.png" /></span></h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="block-heading-two">
+                                            <h3><span><a asp-controller="Events" asp-action="Details" asp-route-id="@element.Id"><button>Tickets/Reservations</button></a></span></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

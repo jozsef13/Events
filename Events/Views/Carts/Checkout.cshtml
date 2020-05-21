@@ -1,0 +1,183 @@
+﻿@model Events.Models.Cart
+
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- start header -->
+<header>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand">
+                    <a asp-area="" asp-controller="Home" asp-action="Index"><img style="border-radius:50%;" src="~/img/logo.jpg" alt="logo" /></a>
+                </div>
+            </div>
+            <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li><a asp-area="" asp-controller="Locations" asp-action="Index">Locations</a></li>
+                    <li><a asp-area="" asp-controller="Artists" asp-action="Index">Artists</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <li><a id="login" asp-area="Identity" asp-page="/Account/Login">Log In</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">My Account</a></li>
+                            if (User.IsInRole("User"))
+                            {
+                                <li class="active">
+                                    <a asp-action="Index" asp-controller="Carts">
+                                        <i class="fa" style="font-size:24px">&#xf07a;</i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+                @if (TempData["Success"] != null)
+                {
+                    <script>
+                        window.onload = function () {
+                            alert("@TempData["Success"]");
+                            setTimeout(2000);
+                        };
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</header>
+<!-- end header -->
+<section id="inner-headline">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="pageTitle">Checkout</h2><br />
+            </div>
+        </div>
+    </div>
+</section>
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-5 mb-md-0">
+                <h2 class="h3 mb-3 text-black">Billing Details</h2>
+                <div class="p-3 p-lg-5 border">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="c_fname" class="text-black">
+                                First Name <span class="text-danger"></span>
+                            </label> <br>
+                            @Model.User.FirstName
+                        </div>
+                        <div class="col-md-6">
+                            <label for="c_lname" class="text-black">
+                                Last Name <span class="text-danger"></span>
+                            </label> <br>
+                            @Model.User.LastName
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label for="c_address" class="text-black">
+                                Address <span class="text-danger"></span>
+                            </label> <br>
+                            @Model.User.Address
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-5">
+                        <div class="col-md-6">
+                            <label for="c_email_address" class="text-black">
+                                Email
+                                Address <span class="text-danger"></span>
+                            </label><br>
+                            @Model.User.Email
+                        </div>
+                        <div class="col-md-6">
+                            <label for="c_phone" class="text-black">
+                                Phone <span class="text-danger"></span>
+                            </label><br>
+                            @Model.User.PhoneNumber
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label for="c_phone" class="text-black">
+                                If something is missing you can update by clicking the button below! <span class="text-danger"></span>
+                            </label><br>
+                            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-primary btn-lg py-3 btn-block">
+                                    Go to MyAccount
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row mb-5">
+                    <div class="col-md-12">
+                        <h2 class="h3 mb-3 text-black">Your Order</h2>
+                        <div class="p-3 p-lg-5 border">
+                            <table class="table site-block-order-table mb-5">
+                                <thead>
+                                    <th>Product</th>
+                                    <th>Single Price</th>
+                                </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                @Model.CartTicket.TicketEvent.Name<strong class="mx-2"> x</strong>@Model.TicketsQuantity<br>
+                                            </td>
+                                            <td>
+                                                @Model.CartTicket.Price
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-black font-weight-bold">
+                                                <strong>
+                                                    Order
+                                                    Total
+                                                </strong>
+                                            </td>
+                                            <td class="text-black font-weight-bold">
+                                                <strong>
+                                                    @Model.TotalPrice
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                            </table>
+                            <div class="form-group">
+                                <div class="col-md-6" style="display: inline">
+                                    <a asp-action="Index" asp-controller="Carts" class="btn btn-primary btn-lg py-3 btn-block">
+                                            Back to cart
+                                    </a>
+                                </div>
+                                <div class="col-md-6" style="display: inline">
+                                    <a asp-action="PlaceOrder" asp-controller="Orders" class="btn btn-primary btn-lg py-3 btn-block">
+                                            Place Order
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- </form> -->
+    </div>
+</div>
